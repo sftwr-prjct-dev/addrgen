@@ -15,7 +15,7 @@ import (
 
 type param struct {
 	network *chaincfg.Params
-	exec    func(string, int, *chaincfg.Params) string
+	exec    func(string, int, *chaincfg.Params) (string, error)
 }
 
 var keyMap = map[string]param{
@@ -33,77 +33,77 @@ func Generate(pubKey string, index int) (string, error) {
 	if !ok {
 		return "", errors.New("Invalid pubkey")
 	}
-	return executor.exec(pubKey, index, executor.network), nil
+	return executor.exec(pubKey, index, executor.network)
 }
 
-func bip44(mpubKey string, n int, ntwk *chaincfg.Params) string {
+func bip44(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 	extKey, _ := hd.NewKeyFromString(mpubKey)
 	extKeyChild0, _ := extKey.Child(0)
 	extKeyChild01, _ := extKeyChild0.Child(uint32(n))
 	pk01, _ := extKeyChild01.Address(ntwk)
-	return pk01.EncodeAddress()
+	return pk01.EncodeAddress(), nil
 }
 
-func bip49(mpubKey string, n int, ntwk *chaincfg.Params) string {
+func bip49(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 	acct0Pub, err := hdkeychain.NewKeyFromString(mpubKey)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	acct0ExternalPub, err := acct0Pub.Child(0)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	acct0External0Pub, err := acct0ExternalPub.Child(uint32(n))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	pubKey, err := acct0External0Pub.ECPubKey()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	keyHash := btcutil.Hash160(pubKey.SerializeCompressed())
 
 	scriptSig, err := txscript.NewScriptBuilder().AddOp(txscript.OP_0).AddData(keyHash).Script()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	acct0ExtAddr0, err := btcutil.NewAddressScriptHash(scriptSig, ntwk)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return acct0ExtAddr0.EncodeAddress()
+	return acct0ExtAddr0.EncodeAddress(), nil
 }
 
-func bip141(mpubKey string, n int, ntwk *chaincfg.Params) string {
+func bip141(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 	acct0Pub, err := hdkeychain.NewKeyFromString(mpubKey)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	acct0ExternalPub, err := acct0Pub.Child(0)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	acct0External0Pub, err := acct0ExternalPub.Child(uint32(n))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	pubKey, err := acct0External0Pub.ECPubKey()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	keyHash := btcutil.Hash160(pubKey.SerializeCompressed())
 
 	acct0ExtAddr0, err := btcutil.NewAddressWitnessPubKeyHash(keyHash, ntwk)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return acct0ExtAddr0.EncodeAddress()
+	return acct0ExtAddr0.EncodeAddress(), nil
 }
