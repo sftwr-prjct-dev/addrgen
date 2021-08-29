@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/btcsuite/btcutil"
-	"github.com/btcsuite/btcutil/hdkeychain"
 	hd "github.com/btcsuite/btcutil/hdkeychain"
 
 	"errors"
@@ -19,19 +18,19 @@ type param struct {
 }
 
 var keyMap = map[string]param{
-	"upub": param{&chaincfg.TestNet3Params, bip49},
-	"tpub": param{&chaincfg.TestNet3Params, bip44},
-	"vpub": param{&chaincfg.TestNet3Params, bip141},
-	"xpub": param{&chaincfg.MainNetParams, bip44},
-	"ypub": param{&chaincfg.MainNetParams, bip49},
-	"zpub": param{&chaincfg.MainNetParams, bip141},
+	"upub": {&chaincfg.TestNet3Params, bip49},
+	"tpub": {&chaincfg.TestNet3Params, bip44},
+	"vpub": {&chaincfg.TestNet3Params, bip141},
+	"xpub": {&chaincfg.MainNetParams, bip44},
+	"ypub": {&chaincfg.MainNetParams, bip49},
+	"zpub": {&chaincfg.MainNetParams, bip141},
 }
 
 func Generate(pubKey string, index int) (string, error) {
 	keyType := strings.ToLower(pubKey)[:4]
 	executor, ok := keyMap[keyType]
 	if !ok {
-		return "", errors.New("Invalid pubkey")
+		return "", errors.New("invalid pubkey")
 	}
 	return executor.exec(pubKey, index, executor.network)
 }
@@ -45,7 +44,7 @@ func bip44(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 }
 
 func bip49(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
-	acct0Pub, err := hdkeychain.NewKeyFromString(mpubKey)
+	acct0Pub, err := hd.NewKeyFromString(mpubKey)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +78,7 @@ func bip49(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 }
 
 func bip141(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
-	acct0Pub, err := hdkeychain.NewKeyFromString(mpubKey)
+	acct0Pub, err := hd.NewKeyFromString(mpubKey)
 	if err != nil {
 		return "", err
 	}

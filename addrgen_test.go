@@ -1,12 +1,9 @@
 package addrgen
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
-
-var pp = fmt.Println
 
 const (
 	zpub = "zpub6mppVZRwQ6zgSK6mpetXfnc9y3VQcuUb1eLoRCrZQGZDbFSNrrmNB3khX3AFYaQxRzSGU7hTjPoftt9D25VfuM9vpDfSdk5XopngBQWmKyG"
