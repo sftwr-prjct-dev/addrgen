@@ -37,8 +37,8 @@ func Generate(pubKey string, index int) (string, error) {
 
 func bip44(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 	extKey, _ := hd.NewKeyFromString(mpubKey)
-	extKeyChild0, _ := extKey.Child(0)
-	extKeyChild01, _ := extKeyChild0.Child(uint32(n))
+	extKeyChild0, _ := extKey.Derive(0)
+	extKeyChild01, _ := extKeyChild0.Derive(uint32(n))
 	pk01, _ := extKeyChild01.Address(ntwk)
 	return pk01.EncodeAddress(), nil
 }
@@ -49,12 +49,12 @@ func bip49(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 		return "", err
 	}
 
-	acct0ExternalPub, err := acct0Pub.Child(0)
+	acct0ExternalPub, err := acct0Pub.Derive(0)
 	if err != nil {
 		return "", err
 	}
 
-	acct0External0Pub, err := acct0ExternalPub.Child(uint32(n))
+	acct0External0Pub, err := acct0ExternalPub.Derive(uint32(n))
 	if err != nil {
 		return "", err
 	}
@@ -83,12 +83,12 @@ func bip141(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
 		return "", err
 	}
 
-	acct0ExternalPub, err := acct0Pub.Child(0)
+	acct0ExternalPub, err := acct0Pub.Derive(0)
 	if err != nil {
 		return "", err
 	}
 
-	acct0External0Pub, err := acct0ExternalPub.Child(uint32(n))
+	acct0External0Pub, err := acct0ExternalPub.Derive(uint32(n))
 	if err != nil {
 		return "", err
 	}
