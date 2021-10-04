@@ -1,6 +1,7 @@
 package addrgen
 
 import (
+	"crypto/ecdsa"
 	"strings"
 
 	"github.com/btcsuite/btcutil"
@@ -12,6 +13,8 @@ import (
 	"github.com/btcsuite/btcd/txscript"
 
 	"github.com/ethereum/go-ethereum/crypto"
+
+	tronAddress "github.com/fbsobreira/gotron-sdk/pkg/address"
 )
 
 type param struct {
@@ -31,13 +34,15 @@ var keyMap = map[string]param{
 type Network string
 
 const (
-	ETH Network = "ETH"
-	BTC Network = "BTC"
+	ETH  Network = "ETH"
+	BTC  Network = "BTC"
+	TRON Network = "TRON"
 )
 
 var networkGenerators = map[Network]func(string, int) (string, error){
-	ETH: GenerateETH,
-	BTC: GenerateBTC,
+	ETH:  GenerateETH,
+	BTC:  GenerateBTC,
+	TRON: GenerateTron,
 }
 
 func Generate(network Network, pubKey string, index int) (string, error) {
@@ -58,21 +63,38 @@ func GenerateBTC(pubKey string, index int) (string, error) {
 }
 
 func GenerateETH(xpubKey string, index int) (string, error) {
-	extKey, err := hd.NewKeyFromString(xpubKey)
+	pkECDSA, err := getPubKey(xpubKey, index)
 	if err != nil {
 		return "", err
+	}
+	address := crypto.PubkeyToAddress(*pkECDSA)
+	return address.Hex(), nil
+}
+
+func getPubKey(xpubKey string, index int) (pkECDSA *ecdsa.PublicKey, err error) {
+	extKey, err := hd.NewKeyFromString(xpubKey)
+	if err != nil {
+		return pkECDSA, err
 	}
 	extKeyChild0, err := extKey.Derive(uint32(index))
 	if err != nil {
-		return "", err
+		return pkECDSA, err
 	}
 	pubKey, err := extKeyChild0.ECPubKey()
 	if err != nil {
+		return pkECDSA, err
+	}
+	pkECDSA = pubKey.ToECDSA()
+	return pkECDSA, nil
+}
+
+func GenerateTron(xpubKey string, index int) (string, error) {
+	pkECDSA, err := getPubKey(xpubKey, index)
+	if err != nil {
 		return "", err
 	}
-	pkECDSA := pubKey.ToECDSA()
-	address := crypto.PubkeyToAddress(*pkECDSA)
-	return address.Hex(), nil
+	address := tronAddress.PubkeyToAddress(*pkECDSA)
+	return address.String(), nil
 }
 
 func bip44(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
