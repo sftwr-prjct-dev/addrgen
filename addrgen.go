@@ -43,7 +43,7 @@ var networkGenerators = map[Network]func(string, int) (string, error){
 func Generate(network Network, pubKey string, index int) (string, error) {
 	generator, ok := networkGenerators[network]
 	if !ok {
-		return "", errors.New("Unsupported network")
+		return "", errors.New("unsupported network")
 	}
 	return generator(pubKey, index)
 }
