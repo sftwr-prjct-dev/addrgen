@@ -10,6 +10,8 @@ import (
 
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type param struct {
@@ -26,13 +28,51 @@ var keyMap = map[string]param{
 	"zpub": {&chaincfg.MainNetParams, bip141},
 }
 
-func Generate(pubKey string, index int) (string, error) {
+type Network string
+
+const (
+	ETH Network = "ETH"
+	BTC Network = "BTC"
+)
+
+var networkGenerators = map[Network]func(string, int) (string, error){
+	ETH: GenerateETH,
+	BTC: GenerateBTC,
+}
+
+func Generate(network Network, pubKey string, index int) (string, error) {
+	generator, ok := networkGenerators[network]
+	if !ok {
+		return "", errors.New("Unsupported network")
+	}
+	return generator(pubKey, index)
+}
+
+func GenerateBTC(pubKey string, index int) (string, error) {
 	keyType := strings.ToLower(pubKey)[:4]
 	executor, ok := keyMap[keyType]
 	if !ok {
 		return "", errors.New("invalid pubkey")
 	}
 	return executor.exec(pubKey, index, executor.network)
+}
+
+func GenerateETH(xpubKey string, index int) (string, error) {
+	extKey, err := hd.NewKeyFromString(xpubKey)
+	if err != nil {
+		return "", err
+	}
+	extKeyChild0, err := extKey.Derive(uint32(index))
+	if err != nil {
+		return "", err
+	}
+	pubKey, err := extKeyChild0.ECPubKey()
+	if err != nil {
+		return "", err
+	}
+	pkECDSA := pubKey.ToECDSA()
+	address := crypto.PubkeyToAddress(*pkECDSA)
+	return address.Hex(), nil
 }
 
 func bip44(mpubKey string, n int, ntwk *chaincfg.Params) (string, error) {
