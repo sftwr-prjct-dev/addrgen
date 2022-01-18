@@ -12,6 +12,9 @@ const (
 	xpubETH  = "xpub6Do3SF4NSy8AHDEpJ5WLP2jpgGwMw7wtrL8KoFvYXp7VCUEbL39XWcefzpNVLoz7DmDKch9nFi8xpfrmyH4yitmScrc2fWseytKDfXJrKYK"
 	xpubTron = "xpub6F7xFHbo5T4PAT4iQjuU3stbhbnTaY9M13hkdTi2PkyqeM5AchV1d4y3MNWZtgTUn1CsP6AS2U1qnMb8BNwNmN5ypFYFVSocyUpVjM5M7KA"
 
+	xpubDash = "xpub6CA5bpUeh1Qx8G9vHi1GdH7ZXqAfUwvquNHYKmDd8ewWrsWPuyNfBDPRxR5GgZyF1nDJMZ1ZdBNLvx5b2e3Lj1CzUXZ6avVv4gmr5womkwD"
+	tpubDash = "tpubDCxj2nRzABz1oMykSf9mKZqvbXKFR3bjkjndVLz9RF5jbnhuUQtvchH8rhXirN3nEJmTnpAo6XZUiA4cSDWxdU4kvmaCjtUMykPCskTbVD3"
+
 	tpub1 = "tpubDCTeyz8KLiDVwexXoYmfDSMRmooGoMrKKrrhXJMhZxtWqm63Y6dbaDaYaEd99dgp6w2b9miDEK6Z7f1qcmbCshEkx7WMgJGkVJtDCdiEarh"
 	tpub2 = "tpubD6NzVbkrYhZ4WV7wyXxpbuZSAx8pC51eMvmYLyrKcr3XeFJJYBAsDx9Kcz9nMGqLDNNN8ycQ5FvCrQnv3wGcsKp4iuS5G3JtfUn5e9Uujfz"
 	tpub  = "tpubDCFUZ43iCUBBTJnMv2nHT4wTuNpDwguV4pbCgDKxbRijNF4N9fWGXNARD22w2AcjHDnzs9SkriSwHS5piRVm91tNMtJywpJwuEY1pt2ioFD"
@@ -42,6 +45,11 @@ func TestGenerate(t *testing.T) {
 		{"xpub", xpubETH, 0, "0x528c72Db041F83b701D47c31803672fB1B1c8c28", "ETH"},
 		{"xpub", xpubETH, 10, "0x8ECda97e617db0F41fa5842269250EB7Fe0E7112", "ETH"},
 		{"xpub", xpubETH, 1, "0x35AC04b5a432Fb82785Af2f14D5723D1ECa320fa", "ETH"},
+
+		{"xpub", xpubDash, 0, "XmrveyPEvUorJG3BW8Fc9YqhrqTPiCvCwX", "DASH"},
+		{"xpub", xpubDash, 9, "XcwjjjQcHcybCqqpPQf993zRuU89cAFb1f", "DASH"},
+		{"tpub", tpubDash, 10, "ydXVxJZgCcHvSFaESkdmbpoK4AC91d8qwy", "DASH"},
+		{"tpub", tpubDash, 1, "yWhXAWwpYwh5yfvaTcFiSs2t5j844JMGLT", "DASH"},
 
 		{"xpub", xpubTron, 0, "TMR2H6jLfCaoyeNzXx8aryMgQCB3CY9kQ6", TRON},
 		{"xpub", xpubTron, 10, "TR8WHeu5Yx7fxFoVBMrdh6S6cTmGN4PZPw", TRON},

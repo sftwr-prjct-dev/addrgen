@@ -30,6 +30,10 @@ var keyMap = map[string]param{
 	"ypub": {&chaincfg.MainNetParams, bip49},
 	"zpub": {&chaincfg.MainNetParams, bip141},
 }
+var dashKeyHashAddrID = map[string]byte{
+	"xpub": 0x4c,
+	"tpub": 0x8c,
+}
 
 type Network string
 
@@ -37,12 +41,14 @@ const (
 	ETH  Network = "ETH"
 	BTC  Network = "BTC"
 	TRON Network = "TRON"
+	DASH Network = "DASH"
 )
 
 var networkGenerators = map[Network]func(string, int) (string, error){
 	ETH:  GenerateETH,
 	BTC:  GenerateBTC,
 	TRON: GenerateTron,
+	DASH: GenerateDash,
 }
 
 func Generate(network Network, pubKey string, index int) (string, error) {
@@ -60,6 +66,21 @@ func GenerateBTC(pubKey string, index int) (string, error) {
 		return "", errors.New("invalid pubkey")
 	}
 	return executor.exec(pubKey, index, executor.network)
+}
+
+func GenerateDash(pubKey string, index int) (string, error) {
+	keyType := strings.ToLower(pubKey)[:4]
+	hashAddrID, ok := dashKeyHashAddrID[keyType]
+	if !ok {
+		return "", errors.New("invalid pubkey")
+	}
+	extKey, _ := hd.NewKeyFromString(pubKey)
+	extKeyChild0, _ := extKey.Derive(0)
+	extKeyChild01, _ := extKeyChild0.Derive(uint32(index))
+
+	net := chaincfg.Params{PubKeyHashAddrID: hashAddrID}
+	pk01, _ := extKeyChild01.Address(&net)
+	return pk01.EncodeAddress(), nil
 }
 
 func GenerateETH(xpubKey string, index int) (string, error) {
