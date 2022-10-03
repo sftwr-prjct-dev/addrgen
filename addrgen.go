@@ -4,8 +4,8 @@ import (
 	"crypto/ecdsa"
 	"strings"
 
-	"github.com/btcsuite/btcutil"
-	hd "github.com/btcsuite/btcutil/hdkeychain"
+	"github.com/btcsuite/btcd/btcutil"
+	hd "github.com/btcsuite/btcd/btcutil/hdkeychain"
 
 	"errors"
 
