@@ -10,6 +10,7 @@ require (
 	github.com/btcsuite/golangcrypto v0.0.0-20150304025918-53f62d9b43e8 // indirect
 	github.com/dashpay/godash v0.0.0-20160726055534-e038a21e0e3d
 	github.com/dashpay/godashutil v0.0.0-20160725171742-2187ca894b87
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.9
 	github.com/fbsobreira/gotron-sdk v0.0.0-20210810183618-c8cf2a5f46d5
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect

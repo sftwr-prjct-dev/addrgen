@@ -40,6 +40,7 @@ type Network string
 const (
 	ETH  Network = "ETH"
 	BTC  Network = "BTC"
+	tBTC Network = "tBTC"
 	TRON Network = "TRON"
 	DASH Network = "DASH"
 )
